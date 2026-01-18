@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Manage Card Links</title>
+  <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
+  <script src="https://p.trellocdn.com/power-up.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Noto Sans', 'Ubuntu', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      font-size: 14px;
+      line-height: 20px;
+      padding: 12px;
+      margin: 0;
+    }
+
+    .section {
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #172b4d;
+    }
+
+    .linked-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      margin-bottom: 4px;
+      background: #f4f5f7;
+      border-radius: 3px;
+    }
+
+    .linked-card-name {
+      flex: 1;
+      cursor: pointer;
+      color: #172b4d;
+    }
+
+    .linked-card-name:hover {
+      text-decoration: underline;
+    }
+
+    .remove-btn {
+      background: #eb5a46;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .remove-btn:hover {
+      background: #cf513d;
+    }
+
+    .add-btn {
+      background: #5aac44;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 8px 12px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .add-btn:hover {
+      background: #519839;
+    }
+
+    .empty-state {
+      color: #5e6c84;
+      font-style: italic;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="section">
+    <div class="section-title">Linked Cards</div>
+    <div id="linked-cards-list">
+      <div class="empty-state">No linked cards yet</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <button class="add-btn" id="add-link-btn">+ Add Link to Card</button>
+  </div>
+
+  <script src="../js/link-manager.js"></script>
+</body>
+</html>

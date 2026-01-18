@@ -1,0 +1,17 @@
+{
+  "name": "Card Links",
+  "details": "Track and manage links between Trello cards",
+  "icon": {
+    "url": "./images/icon.png"
+  },
+  "author": "Your Name",
+  "capabilities": [
+    "card-buttons",
+    "card-detail-badges"
+  ],
+  "connectors": {
+    "iframe": {
+      "url": "./index.html"
+    }
+  }
+}
