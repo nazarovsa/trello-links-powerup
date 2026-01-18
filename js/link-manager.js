@@ -138,10 +138,20 @@ t.render(async function() {
     } else {
       await t.popup({
         title: 'Select a card to link',
-        items: items,
+        items: function(t, options) {
+          const searchTerm = (options.search || '').toLowerCase();
+          if (!searchTerm) {
+            return items;
+          }
+          return items.filter(item =>
+            item.text.toLowerCase().includes(searchTerm)
+          );
+        },
         search: {
+          count: items.length,
           placeholder: 'Search cards...',
-          empty: 'No cards found'
+          empty: 'No cards found',
+          searching: 'Searching...'
         }
       });
     }
