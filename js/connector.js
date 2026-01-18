@@ -105,7 +105,4 @@ window.TrelloPowerUp.initialize({
       }
     }];
   }
-}, {
-  appKey: 'YOUR_APP_KEY',
-  appName: 'Card Links'
 });

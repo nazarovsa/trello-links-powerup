@@ -27,16 +27,7 @@ trello-links-powerup/
 
 ## Setup Instructions
 
-### 1. Get a Trello API Key
-
-1. Go to https://trello.com/power-ups/admin
-2. Click "New" to create a new Power-Up
-3. Fill in the required information:
-   - **Name**: Card Links (or your preferred name)
-   - **Workspace**: Select your workspace
-4. Copy your API Key
-
-### 2. Host on GitHub Pages
+### 1. Host on GitHub Pages
 
 1. Initialize a git repository (if not already done):
    ```bash
@@ -61,32 +52,18 @@ trello-links-powerup/
    - Click "Save"
    - Your Power-Up will be available at: `https://YOUR_USERNAME.github.io/trello-links-powerup/`
 
-### 3. Configure the Power-Up in Trello
+### 2. Create and Configure the Power-Up in Trello
 
-1. Go back to https://trello.com/power-ups/admin
-2. Select your Power-Up
-3. Update the following settings:
+1. Go to https://trello.com/power-ups/admin
+2. Click "New" to create a new Power-Up
+3. Fill in the required information:
+   - **Name**: Card Links (or your preferred name)
+   - **Workspace**: Select your workspace
+4. Configure the Power-Up settings:
    - **Iframe Connector URL**: `https://YOUR_USERNAME.github.io/trello-links-powerup/index.html`
    - **Capabilities**: Ensure "card-buttons" and "card-detail-badges" are enabled
 
-4. Update the `appKey` in `js/connector.js`:
-   ```javascript
-   window.TrelloPowerUp.initialize({
-     // ... your capabilities
-   }, {
-     appKey: 'YOUR_API_KEY_HERE',  // Replace with your actual API key
-     appName: 'Card Links'
-   });
-   ```
-
-5. Commit and push the changes:
-   ```bash
-   git add .
-   git commit -m "Add API key"
-   git push
-   ```
-
-### 4. Add the Power-Up to a Board
+### 3. Add the Power-Up to a Board
 
 1. Open a Trello board
 2. Click "Power-Ups" in the board menu
@@ -152,7 +129,7 @@ The Power-Up stores card links at the board level using Trello's shared storage:
 
 **Power-Up doesn't load:**
 - Check that your GitHub Pages URL is correct and accessible
-- Verify your API key is correctly set in `connector.js`
+- Verify the Iframe Connector URL is properly configured in Trello Power-Up settings
 - Check the browser console for errors
 
 **Links not saving:**
