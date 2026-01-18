@@ -112,11 +112,9 @@ t.render(async function() {
 
   // Add click handler for the "Add Link" button
   document.getElementById('add-link-btn').addEventListener('click', async function() {
-    const board = await t.board('id', 'cards');
-    const currentBoardId = board.id;
-
     // Get all cards on the board except the current card
-    const availableCards = board.cards.filter(card => card.id !== currentCardId);
+    const allCards = await t.cards('all');
+    const availableCards = allCards.filter(card => card.id !== currentCardId);
 
     // Get already linked cards to mark them
     const linkedCardIds = await getCardLinks(currentCardId);
