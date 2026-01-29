@@ -1,5 +1,43 @@
 const LINKS_KEY = 'card-links';
 
+// Clean and validate the entire links data structure
+async function cleanLinksData(t) {
+  try {
+    const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
+    const cleaned = {};
+    let needsCleaning = false;
+
+    // Validate each entry
+    for (const [cardId, links] of Object.entries(allLinks)) {
+      if (typeof cardId === 'string' && cardId.length > 0 && Array.isArray(links)) {
+        // Filter to only valid card IDs
+        const validLinks = links.filter(id => typeof id === 'string' && id.length > 0);
+        if (validLinks.length > 0) {
+          cleaned[cardId] = validLinks;
+        }
+        if (validLinks.length !== links.length) {
+          needsCleaning = true;
+        }
+      } else {
+        needsCleaning = true;
+      }
+    }
+
+    // If we found invalid data, save the cleaned version
+    if (needsCleaning || Object.keys(cleaned).length !== Object.keys(allLinks).length) {
+      await t.set('board', 'shared', LINKS_KEY, cleaned);
+      console.log('Cleaned card links data');
+    }
+
+    return cleaned;
+  } catch (e) {
+    console.error('Error cleaning links data:', e);
+    // If all else fails, reset to empty
+    await t.set('board', 'shared', LINKS_KEY, {});
+    return {};
+  }
+}
+
 // Helper function to get links for a card
 async function getCardLinks(t, cardId) {
   try {
@@ -139,6 +177,12 @@ window.TrelloPowerUp.initialize({
 
   // Card detail badges - shown in the card details section
   'card-detail-badges': async function(t, options) {
+    // Clean data on first access (runs once per page load)
+    if (!window.__linksDataCleaned) {
+      await cleanLinksData(t);
+      window.__linksDataCleaned = true;
+    }
+
     const context = t.getContext();
     const cardId = context.card;
 
