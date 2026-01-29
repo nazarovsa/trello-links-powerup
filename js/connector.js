@@ -33,8 +33,6 @@ async function cleanLinksData(t) {
     return cleaned;
   } catch (e) {
     console.error('Error cleaning links data:', e);
-    // If all else fails, reset to empty
-    await t.set('board', 'shared', LINKS_KEY, '{}');
     return {};
   }
 }
@@ -210,9 +208,7 @@ window.TrelloPowerUp.initialize({
           console.log('Initialized empty links data');
         }
       } catch (e) {
-        // On any error, reset to empty
-        await t.set('board', 'shared', LINKS_KEY, '{}');
-        console.log('Reset links data after error');
+        console.error('Error accessing links data:', e);
       }
       window.__linksDataCleaned = true;
     }
