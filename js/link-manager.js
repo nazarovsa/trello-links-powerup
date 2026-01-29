@@ -6,7 +6,8 @@ let currentCardId;
 // Helper function to get links for a card
 async function getCardLinks(cardId) {
   try {
-    const links = await t.get('board', 'shared', LINKS_KEY, {}) || {};
+    const linksString = await t.get('board', 'shared', LINKS_KEY, '{}');
+    const links = JSON.parse(linksString);
     // Ensure we return an array
     const cardLinks = links[cardId];
     return Array.isArray(cardLinks) ? cardLinks : [];
@@ -19,13 +20,14 @@ async function getCardLinks(cardId) {
 // Helper function to save links for a card
 async function saveCardLinks(cardId, linkedCardIds) {
   try {
-    const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
+    const linksString = await t.get('board', 'shared', LINKS_KEY, '{}');
+    const allLinks = JSON.parse(linksString);
     // Ensure linkedCardIds is an array of strings
     const cleanLinks = Array.isArray(linkedCardIds)
       ? linkedCardIds.filter(id => typeof id === 'string' && id.length > 0)
       : [];
     allLinks[cardId] = cleanLinks;
-    await t.set('board', 'shared', LINKS_KEY, allLinks);
+    await t.set('board', 'shared', LINKS_KEY, JSON.stringify(allLinks));
   } catch (e) {
     console.error('Error saving card links:', e);
   }
@@ -35,7 +37,8 @@ async function saveCardLinks(cardId, linkedCardIds) {
 async function addLink(cardId1, cardId2) {
   try {
     // Get all links in one read to avoid race conditions
-    const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
+    const linksString = await t.get('board', 'shared', LINKS_KEY, '{}');
+    const allLinks = JSON.parse(linksString);
 
     const links1 = allLinks[cardId1] || [];
     const links2 = allLinks[cardId2] || [];
@@ -51,11 +54,8 @@ async function addLink(cardId1, cardId2) {
     allLinks[cardId1] = links1;
     allLinks[cardId2] = links2;
 
-    // Convert to plain object to ensure serializability
-    const plainObject = JSON.parse(JSON.stringify(allLinks));
-
-    // Single write operation
-    await t.set('board', 'shared', LINKS_KEY, plainObject);
+    // Single write operation - store as JSON string
+    await t.set('board', 'shared', LINKS_KEY, JSON.stringify(allLinks));
     console.log('Successfully added link', cardId1, '<->', cardId2);
   } catch (e) {
     console.error('Error adding link:', e);
@@ -68,7 +68,8 @@ async function addLink(cardId1, cardId2) {
 async function removeLink(cardId1, cardId2) {
   try {
     // Get all links in one read to avoid race conditions
-    const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
+    const linksString = await t.get('board', 'shared', LINKS_KEY, '{}');
+    const allLinks = JSON.parse(linksString);
 
     const links1 = allLinks[cardId1] || [];
     const links2 = allLinks[cardId2] || [];
@@ -80,11 +81,8 @@ async function removeLink(cardId1, cardId2) {
     allLinks[cardId1] = filteredLinks1;
     allLinks[cardId2] = filteredLinks2;
 
-    // Convert to plain object to ensure serializability
-    const plainObject = JSON.parse(JSON.stringify(allLinks));
-
-    // Single write operation
-    await t.set('board', 'shared', LINKS_KEY, plainObject);
+    // Single write operation - store as JSON string
+    await t.set('board', 'shared', LINKS_KEY, JSON.stringify(allLinks));
     console.log('Successfully removed link', cardId1, '<->', cardId2);
   } catch (e) {
     console.error('Error removing link:', e);
