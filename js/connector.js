@@ -60,7 +60,13 @@ window.TrelloPowerUp.initialize({
 
   // Card detail badges - shown in the card details section
   'card-detail-badges': async function(t, options) {
-    const cardId = options.card.id;
+    const context = t.getContext();
+    const cardId = context.card;
+
+    if (!cardId) {
+      return [];
+    }
+
     const linkedCardIds = await getCardLinks(t, cardId);
 
     if (linkedCardIds.length === 0) {
