@@ -231,7 +231,7 @@ window.TrelloPowerUp.initialize({
     }
 
     return [{
-      text: `🔗${linkedCardIds.length}`
+      text: `🔗 ${linkedCardIds.length}`
     }];
   },
 
