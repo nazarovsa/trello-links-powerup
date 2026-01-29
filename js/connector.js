@@ -68,44 +68,63 @@ async function saveCardLinks(t, cardId, linkedCardIds) {
 
 // Helper function to add a bidirectional link
 async function addLink(t, cardId1, cardId2) {
-  // Get all links in one read to avoid race conditions
-  const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
+  try {
+    // Get all links in one read to avoid race conditions
+    const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
 
-  const links1 = allLinks[cardId1] || [];
-  const links2 = allLinks[cardId2] || [];
+    const links1 = allLinks[cardId1] || [];
+    const links2 = allLinks[cardId2] || [];
 
-  if (!links1.includes(cardId2)) {
-    links1.push(cardId2);
+    if (!links1.includes(cardId2)) {
+      links1.push(cardId2);
+    }
+    if (!links2.includes(cardId1)) {
+      links2.push(cardId1);
+    }
+
+    // Update both cards in the object
+    allLinks[cardId1] = links1;
+    allLinks[cardId2] = links2;
+
+    // Convert to plain object to ensure serializability
+    const plainObject = JSON.parse(JSON.stringify(allLinks));
+
+    // Single write operation
+    await t.set('board', 'shared', LINKS_KEY, plainObject);
+    console.log('Successfully added link', cardId1, '<->', cardId2);
+  } catch (e) {
+    console.error('Error adding link:', e);
+    console.error('Card IDs:', cardId1, cardId2);
+    throw e;
   }
-  if (!links2.includes(cardId1)) {
-    links2.push(cardId1);
-  }
-
-  // Update both cards in the object
-  allLinks[cardId1] = links1;
-  allLinks[cardId2] = links2;
-
-  // Single write operation
-  await t.set('board', 'shared', LINKS_KEY, allLinks);
 }
 
 // Helper function to remove a bidirectional link
 async function removeLink(t, cardId1, cardId2) {
-  // Get all links in one read to avoid race conditions
-  const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
+  try {
+    // Get all links in one read to avoid race conditions
+    const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
 
-  const links1 = allLinks[cardId1] || [];
-  const links2 = allLinks[cardId2] || [];
+    const links1 = allLinks[cardId1] || [];
+    const links2 = allLinks[cardId2] || [];
 
-  const filteredLinks1 = links1.filter(id => id !== cardId2);
-  const filteredLinks2 = links2.filter(id => id !== cardId1);
+    const filteredLinks1 = links1.filter(id => id !== cardId2);
+    const filteredLinks2 = links2.filter(id => id !== cardId1);
 
-  // Update both cards in the object
-  allLinks[cardId1] = filteredLinks1;
-  allLinks[cardId2] = filteredLinks2;
+    // Update both cards in the object
+    allLinks[cardId1] = filteredLinks1;
+    allLinks[cardId2] = filteredLinks2;
 
-  // Single write operation
-  await t.set('board', 'shared', LINKS_KEY, allLinks);
+    // Convert to plain object to ensure serializability
+    const plainObject = JSON.parse(JSON.stringify(allLinks));
+
+    // Single write operation
+    await t.set('board', 'shared', LINKS_KEY, plainObject);
+    console.log('Successfully removed link', cardId1, '<->', cardId2);
+  } catch (e) {
+    console.error('Error removing link:', e);
+    throw e;
+  }
 }
 
 // Initialize the Power-Up
