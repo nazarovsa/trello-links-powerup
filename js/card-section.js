@@ -1,7 +1,12 @@
 const LINKS_KEY = 'card-links';
 
 let t = window.TrelloPowerUp.iframe();
-let currentCardId;
+
+// Helper function to get current card ID dynamically
+function getCurrentCardId() {
+  const context = t.getContext();
+  return context.card;
+}
 
 // Helper function to get links for a card
 async function getCardLinks(cardId) {
@@ -91,7 +96,7 @@ async function removeLink(cardId1, cardId2) {
 }
 
 async function renderLinkedCards() {
-  const linkedCardIds = await getCardLinks(currentCardId);
+  const linkedCardIds = await getCardLinks(getCurrentCardId());
   const listElement = document.getElementById('linked-cards-list');
 
   if (linkedCardIds.length === 0) {
@@ -145,7 +150,7 @@ async function renderLinkedCards() {
   document.querySelectorAll('.remove-link').forEach(button => {
     button.addEventListener('click', async function() {
       const cardIdToRemove = this.getAttribute('data-card-id');
-      await removeLink(currentCardId, cardIdToRemove);
+      await removeLink(getCurrentCardId(), cardIdToRemove);
       await renderLinkedCards();
     });
   });
@@ -155,13 +160,12 @@ async function renderLinkedCards() {
 
 // Initialize
 t.render(async function() {
-  const context = t.getContext();
-  currentCardId = context.card;
-
   await renderLinkedCards();
 
   // Add click handler for the "Add Link" button
   document.getElementById('add-link-btn').addEventListener('click', async function(event) {
+    const currentCardId = getCurrentCardId();
+
     // Get all cards on the board except the current card
     const allCards = await t.cards('all');
     const availableCards = allCards.filter(card => card.id !== currentCardId);
@@ -172,6 +176,7 @@ t.render(async function() {
     const items = availableCards.map(card => ({
       text: linkedCardIds.includes(card.id) ? `${card.name} (already linked)` : card.name,
       callback: async function(t) {
+        const currentCardId = getCurrentCardId();
         if (!linkedCardIds.includes(card.id)) {
           await addLink(currentCardId, card.id);
           await renderLinkedCards();
