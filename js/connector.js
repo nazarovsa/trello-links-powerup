@@ -193,8 +193,8 @@ window.TrelloPowerUp.initialize({
     }];
   },
 
-  // Card detail badges - shown in the card details section
-  'card-detail-badges': async function(t, options) {
+  // Card badges - shown on the card face in board view
+  'card-badges': async function(t, options) {
     // Reset corrupted data on first access (runs once per page load)
     if (!window.__linksDataCleaned) {
       try {
