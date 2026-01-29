@@ -50,8 +50,7 @@ async function renderLinkedCards() {
 
   if (linkedCardIds.length === 0) {
     listElement.innerHTML = '<div class="empty-state">No linked cards</div>';
-    t.sizeTo('#content');
-    return;
+    return t.sizeTo('body');
   }
 
   // Fetch card details for all linked cards
@@ -99,7 +98,7 @@ async function renderLinkedCards() {
     });
   });
 
-  t.sizeTo('#content');
+  return t.sizeTo('body');
 }
 
 // Initialize
