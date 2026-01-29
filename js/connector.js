@@ -15,8 +15,11 @@ async function saveCardLinks(t, cardId, linkedCardIds) {
 
 // Helper function to add a bidirectional link
 async function addLink(t, cardId1, cardId2) {
-  const links1 = await getCardLinks(t, cardId1);
-  const links2 = await getCardLinks(t, cardId2);
+  // Get all links in one read to avoid race conditions
+  const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
+
+  const links1 = allLinks[cardId1] || [];
+  const links2 = allLinks[cardId2] || [];
 
   if (!links1.includes(cardId2)) {
     links1.push(cardId2);
@@ -25,20 +28,31 @@ async function addLink(t, cardId1, cardId2) {
     links2.push(cardId1);
   }
 
-  await saveCardLinks(t, cardId1, links1);
-  await saveCardLinks(t, cardId2, links2);
+  // Update both cards in the object
+  allLinks[cardId1] = links1;
+  allLinks[cardId2] = links2;
+
+  // Single write operation
+  await t.set('board', 'shared', LINKS_KEY, allLinks);
 }
 
 // Helper function to remove a bidirectional link
 async function removeLink(t, cardId1, cardId2) {
-  const links1 = await getCardLinks(t, cardId1);
-  const links2 = await getCardLinks(t, cardId2);
+  // Get all links in one read to avoid race conditions
+  const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
+
+  const links1 = allLinks[cardId1] || [];
+  const links2 = allLinks[cardId2] || [];
 
   const filteredLinks1 = links1.filter(id => id !== cardId2);
   const filteredLinks2 = links2.filter(id => id !== cardId1);
 
-  await saveCardLinks(t, cardId1, filteredLinks1);
-  await saveCardLinks(t, cardId2, filteredLinks2);
+  // Update both cards in the object
+  allLinks[cardId1] = filteredLinks1;
+  allLinks[cardId2] = filteredLinks2;
+
+  // Single write operation
+  await t.set('board', 'shared', LINKS_KEY, allLinks);
 }
 
 // Initialize the Power-Up
