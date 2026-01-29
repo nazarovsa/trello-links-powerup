@@ -44,8 +44,58 @@ async function removeLink(t, cardId1, cardId2) {
 // Initialize the Power-Up
 window.TrelloPowerUp.initialize({
   // Card buttons - shown on the back of cards
-  'card-buttons': function(t, options) {
+  'card-buttons': async function(t, options) {
+    const context = t.getContext();
+    const currentCardId = context.card;
+
     return [{
+      icon: 'https://cdn.glitch.com/1b42d7fe-bda8-4af8-a6c8-eff0cea9e08a%2Frocket-ship.png?1494946700421',
+      text: 'Add Link',
+      callback: async function(t) {
+        // Get all cards on the board except the current card
+        const allCards = await t.cards('all');
+        const availableCards = allCards.filter(card => card.id !== currentCardId);
+
+        // Get already linked cards to mark them
+        const linkedCardIds = await getCardLinks(t, currentCardId);
+
+        const items = availableCards.map(card => ({
+          text: linkedCardIds.includes(card.id) ? `${card.name} (already linked)` : card.name,
+          callback: async function(t) {
+            if (!linkedCardIds.includes(card.id)) {
+              await addLink(t, currentCardId, card.id);
+            }
+            t.closePopup();
+          }
+        }));
+
+        if (items.length === 0) {
+          return t.alert({
+            message: 'No other cards available on this board to link.',
+            duration: 3
+          });
+        }
+
+        return t.popup({
+          title: 'Select a card to link',
+          items: function(t, options) {
+            const searchTerm = (options.search || '').toLowerCase();
+            if (!searchTerm) {
+              return items;
+            }
+            return items.filter(item =>
+              item.text.toLowerCase().includes(searchTerm)
+            );
+          },
+          search: {
+            count: items.length,
+            placeholder: 'Search cards...',
+            empty: 'No cards found',
+            searching: 'Searching...'
+          }
+        });
+      }
+    }, {
       icon: 'https://cdn.glitch.com/1b42d7fe-bda8-4af8-a6c8-eff0cea9e08a%2Frocket-ship.png?1494946700421',
       text: 'Manage Links',
       callback: function(t) {
