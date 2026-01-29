@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
+  <script src="https://p.trellocdn.com/power-up.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Noto Sans', 'Ubuntu', sans-serif;
+      font-size: 14px;
+      padding: 8px;
+      margin: 0;
+    }
+
+    .linked-card-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+      margin-bottom: 4px;
+      background: #f4f5f7;
+      border-radius: 3px;
+    }
+
+    .linked-card-name {
+      flex: 1;
+      cursor: pointer;
+      color: #172b4d;
+    }
+
+    .linked-card-name:hover {
+      text-decoration: underline;
+    }
+
+    .remove-link {
+      background: none;
+      border: none;
+      color: #5e6c84;
+      cursor: pointer;
+      padding: 4px 8px;
+      font-size: 18px;
+    }
+
+    .remove-link:hover {
+      color: #eb5a46;
+    }
+
+    .add-link-btn {
+      background: #5aac44;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 6px 12px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .add-link-btn:hover {
+      background: #519839;
+    }
+
+    .empty-state {
+      color: #5e6c84;
+      font-style: italic;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="content">
+    <div id="linked-cards-list"></div>
+    <button class="add-link-btn" id="add-link-btn">+ Add Link</button>
+  </div>
+  <script src="../js/card-section.js"></script>
+</body>
+</html>

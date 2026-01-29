@@ -110,5 +110,25 @@ window.TrelloPowerUp.initialize({
         });
       }
     }];
+  },
+
+  // Card back section - shown directly in card details
+  'card-back-section': async function(t, options) {
+    const context = t.getContext();
+    const cardId = context.card;
+
+    if (!cardId) {
+      return null;
+    }
+
+    return {
+      title: 'Linked Cards',
+      icon: 'https://cdn.glitch.com/1b42d7fe-bda8-4af8-a6c8-eff0cea9e08a%2Frocket-ship.png?1494946700421',
+      content: {
+        type: 'iframe',
+        url: t.signUrl('./views/card-section.html'),
+        height: 200
+      }
+    };
   }
 });
