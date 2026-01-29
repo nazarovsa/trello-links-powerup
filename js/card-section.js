@@ -99,13 +99,44 @@ async function renderLinkedCards() {
     return t.sizeTo('body');
   }
 
-  // Render the linked cards with just IDs (no slow API calls)
-  listElement.innerHTML = linkedCardIds.map(cardId => `
+  // Fetch card details for all linked cards
+  const cardDetails = await Promise.all(
+    linkedCardIds.map(async (cardId) => {
+      try {
+        const card = await t.card(cardId);
+        return {
+          id: card.id,
+          name: card.name,
+          closed: card.closed
+        };
+      } catch (error) {
+        console.error('Failed to fetch card details:', error);
+        return {
+          id: cardId,
+          name: `Card ${cardId.substring(0, 8)}...`,
+          closed: false
+        };
+      }
+    })
+  );
+
+  // Render the linked cards with checkmark and name
+  listElement.innerHTML = cardDetails.map(card => `
     <div class="linked-card-item">
-      <div class="linked-card-name">Card ${cardId.substring(0, 8)}...</div>
-      <button class="remove-link" data-card-id="${cardId}" title="Remove link">×</button>
+      <div class="linked-card-name" data-card-id="${card.id}">
+        ${card.closed ? '<span class="checkmark">✓</span>' : ''}${card.name}
+      </div>
+      <button class="remove-link" data-card-id="${card.id}" title="Remove link">×</button>
     </div>
   `).join('');
+
+  // Add click handlers for card names (open card)
+  document.querySelectorAll('.linked-card-name').forEach(element => {
+    element.addEventListener('click', async function() {
+      const cardId = this.getAttribute('data-card-id');
+      await t.showCard(cardId);
+    });
+  });
 
   // Add click handlers for remove buttons
   document.querySelectorAll('.remove-link').forEach(button => {
