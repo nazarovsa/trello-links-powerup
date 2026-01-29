@@ -230,40 +230,14 @@ window.TrelloPowerUp.initialize({
       return [];
     }
 
-    // Fetch card details for all linked cards
-    const linkedCards = await Promise.all(
-      linkedCardIds.map(async (id) => {
-        try {
-          return await t.card(id, 'id', 'name', 'url');
-        } catch (e) {
-          return null;
-        }
-      })
-    );
-
-    // Filter out any cards that couldn't be fetched (might have been deleted)
-    const validLinkedCards = linkedCards.filter(card => card !== null);
-
-    // Update storage to remove invalid links
-    if (validLinkedCards.length !== linkedCardIds.length) {
-      const validIds = validLinkedCards.map(card => card.id);
-      await saveCardLinks(t, cardId, validIds);
-    }
-
     return [{
       title: 'Linked Cards',
-      text: `${validLinkedCards.length} card${validLinkedCards.length !== 1 ? 's' : ''}`,
-      icon: 'https://cdn.glitch.com/1b42d7fe-bda8-4af8-a6c8-eff0cea9e08a%2Frocket-ship.png?1494946700421',
+      text: `${linkedCardIds.length} card${linkedCardIds.length !== 1 ? 's' : ''}`,
       callback: function(t) {
         return t.popup({
-          title: 'Linked Cards',
-          items: validLinkedCards.map(card => ({
-            text: card.name,
-            callback: async function(t) {
-              await t.hideCard();
-              window.open(card.url, '_blank');
-            }
-          }))
+          title: 'Manage Card Links',
+          url: './views/link-manager.html',
+          height: 350
         });
       }
     }];
