@@ -231,15 +231,7 @@ window.TrelloPowerUp.initialize({
     }
 
     return [{
-      title: 'Linked Cards',
-      text: `${linkedCardIds.length} card${linkedCardIds.length !== 1 ? 's' : ''}`,
-      callback: function(t) {
-        return t.popup({
-          title: 'Manage Card Links',
-          url: './views/link-manager.html',
-          height: 350
-        });
-      }
+      text: `🔗${linkedCardIds.length}`
     }];
   },
 
