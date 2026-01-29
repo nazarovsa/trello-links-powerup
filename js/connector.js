@@ -231,7 +231,9 @@ window.TrelloPowerUp.initialize({
     }
 
     return [{
-      text: `🔗 ${linkedCardIds.length}`
+      icon: './icon.png',
+      text: `${linkedCardIds.length}`,
+      color: 'blue'
     }];
   },
 
