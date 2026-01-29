@@ -110,7 +110,7 @@ t.render(async function() {
   await renderLinkedCards();
 
   // Add click handler for the "Add Link" button
-  document.getElementById('add-link-btn').addEventListener('click', async function() {
+  document.getElementById('add-link-btn').addEventListener('click', async function(event) {
     // Get all cards on the board except the current card
     const allCards = await t.cards('all');
     const availableCards = allCards.filter(card => card.id !== currentCardId);
@@ -151,7 +151,8 @@ t.render(async function() {
           placeholder: 'Search cards...',
           empty: 'No cards found',
           searching: 'Searching...'
-        }
+        },
+        mouseEvent: event
       });
     }
   });
