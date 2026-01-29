@@ -103,7 +103,8 @@ async function renderLinkedCards() {
   const cardDetails = await Promise.all(
     linkedCardIds.map(async (cardId) => {
       try {
-        const card = await t.card(cardId);
+        const cards = await t.cards(cardId);
+        const card = cards[0]
         return {
           id: card.id,
           name: card.name,
