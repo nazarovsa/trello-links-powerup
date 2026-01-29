@@ -2,15 +2,30 @@ const LINKS_KEY = 'card-links';
 
 // Helper function to get links for a card
 async function getCardLinks(t, cardId) {
-  const links = await t.get('board', 'shared', LINKS_KEY, {}) || {};
-  return links[cardId] || [];
+  try {
+    const links = await t.get('board', 'shared', LINKS_KEY, {}) || {};
+    // Ensure we return an array
+    const cardLinks = links[cardId];
+    return Array.isArray(cardLinks) ? cardLinks : [];
+  } catch (e) {
+    console.error('Error getting card links:', e);
+    return [];
+  }
 }
 
 // Helper function to save links for a card
 async function saveCardLinks(t, cardId, linkedCardIds) {
-  const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
-  allLinks[cardId] = linkedCardIds;
-  await t.set('board', 'shared', LINKS_KEY, allLinks);
+  try {
+    const allLinks = await t.get('board', 'shared', LINKS_KEY, {}) || {};
+    // Ensure linkedCardIds is an array of strings
+    const cleanLinks = Array.isArray(linkedCardIds)
+      ? linkedCardIds.filter(id => typeof id === 'string' && id.length > 0)
+      : [];
+    allLinks[cardId] = cleanLinks;
+    await t.set('board', 'shared', LINKS_KEY, allLinks);
+  } catch (e) {
+    console.error('Error saving card links:', e);
+  }
 }
 
 // Helper function to add a bidirectional link
