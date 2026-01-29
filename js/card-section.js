@@ -99,12 +99,14 @@ async function renderLinkedCards() {
     return t.sizeTo('body');
   }
 
+  const allCards = await t.cards('id', 'name', 'closed');
+  const linkedCards = allCards.filter(x => linkedCardIds.includes(x.id));
+
   // Fetch card details for all linked cards
   const cardDetails = await Promise.all(
     linkedCardIds.map(async (cardId) => {
       try {
-        const cards = await t.cards(cardId);
-        const card = cards[0]
+        const card = linkedCards.find(x => x.id == cardId)
         return {
           id: card.id,
           name: card.name,
