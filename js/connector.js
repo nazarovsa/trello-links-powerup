@@ -195,9 +195,25 @@ window.TrelloPowerUp.initialize({
 
   // Card detail badges - shown in the card details section
   'card-detail-badges': async function(t, options) {
-    // Clean data on first access (runs once per page load)
+    // Reset corrupted data on first access (runs once per page load)
     if (!window.__linksDataCleaned) {
-      await cleanLinksData(t);
+      try {
+        // Try to get data - if it's an object (old format), reset it
+        const data = await t.get('board', 'shared', LINKS_KEY);
+        if (data && typeof data === 'object' && !Array.isArray(data)) {
+          // Old object format detected - reset to empty JSON string
+          await t.set('board', 'shared', LINKS_KEY, '{}');
+          console.log('Reset old object format to JSON string');
+        } else if (!data || typeof data !== 'string') {
+          // No data or invalid - initialize as empty JSON string
+          await t.set('board', 'shared', LINKS_KEY, '{}');
+          console.log('Initialized empty links data');
+        }
+      } catch (e) {
+        // On any error, reset to empty
+        await t.set('board', 'shared', LINKS_KEY, '{}');
+        console.log('Reset links data after error');
+      }
       window.__linksDataCleaned = true;
     }
 
